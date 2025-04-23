@@ -106,8 +106,34 @@ const Redeemer = () => Data.to({ msg: fromText("Nguyen Hong Sac_253")}, Redeemer
 export async function lockUtxo(lovelace:bigint, policyId:string, tokenName: string, amount: bigint): Promise<string> {
     const unit = policyId + fromText(tokenName);
 
+    const assets = {
+        lovelace,
+        [unit]: amount,
+      };
+
     const tx = await lucid.newTx()
-        .payToContract(alwaysSucceedAddress, { Inline: Datum() }, { lovelace }, {[unit] : amount})
+        .payToContract(alwaysSucceedAddress, { Inline: Datum() }, assets)
+        .commit();
+    const signedTx = await tx.sign().commit();
+    const txHash = await signedTx.submit();
+
+    return txHash;
+}
+export async function lockUtxoAda(lovelace:bigint): Promise<string> {
+
+    const tx = await lucid.newTx()
+        .payToContract(alwaysSucceedAddress, { Inline: Datum() }, { lovelace })
+        .commit();
+    const signedTx = await tx.sign().commit();
+    const txHash = await signedTx.submit();
+
+    return txHash;
+}
+export async function lockUtxoToken(policyId:string, tokenName: string, amount: bigint): Promise<string> {
+    const unit = policyId + fromText(tokenName);
+
+    const tx = await lucid.newTx()
+        .payToContract(alwaysSucceedAddress, { Inline: Datum() }, {[unit] : amount})
         .commit();
     const signedTx = await tx.sign().commit();
     const txHash = await signedTx.submit();
@@ -157,10 +183,16 @@ async function main() {
         const lovelace_lock = 50_000_000n;
         console.log(`Lovelace lock: ${lovelace_lock}`);
 
-
         // const locktxHash = await lockUtxo(lovelace_lock, policyId, tokenName, amount);
         // console.log(`Lock UTxO, tx: ${locktxHash}`);
 
+        // Lock 50 ada
+        // const locktxHash = await lockUtxoAda(lovelace_lock);
+        // console.log(`Lock UTxO, tx: ${locktxHash}`);
+
+        // Lock 500 token
+        // const locktxHash = await lockUtxoToken(lovelace_lock);
+        // console.log(`Lock UTxO, tx: ${locktxHash}`);
 
         const redeemTxHash = await unlockUtxo(Redeemer());
         console.log(`Unlock UTxO, tx: ${redeemTxHash}`);
