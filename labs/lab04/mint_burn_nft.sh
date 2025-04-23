@@ -25,15 +25,15 @@ address=$(cat base.addr)
 address_SKEY="payment.xsk"
 cardano-cli query utxo --address $address $testnet
 
-txhash="c85913b36c2b0b9edff0cb28b89f13a050b85c0e8d114c6f88f9e05ff4b339af"
-txix="1"
+txhash="ee321281c8eac8f0a82c6b6f9ed959aaedce1be04f9196b4a5294dac8e5e1d8c"
+txix="0"
 policyid=$(cat policy/policyID)
 
-realtokenname="NFT-BK02"
+realtokenname="NFT1"
 tokenname=$(echo -n $realtokenname | xxd -b -ps -c 80 | tr -d '\n')
 tokenamount="1"
 output="2000000"
-ipfs_hash="QmdpcDnQj5u54JZ5ZxQMLXjajZAeAXRqHs7dNGvh7wVhq1"
+ipfs_hash="QmRE3Qnz5Q8dVtKghL4NBhJBH4cXPwfRge7HMiBhK92SJX"
 
 #4-Tạo metadata
 echo "{" >> metadata.json
@@ -83,18 +83,17 @@ cardano-cli query utxo $testnet --address $address
 #2- cập nhật biến môi trường
 txhash="5a4925b330916e62307766802f5af4ce8b234c27de8271a901086c08733da0f1"
 txix="0"
-burnoutput="1400000"
+burnoutput="1000000"
 
 #3-Tạo giao dịch
-cardano-cli conway transaction build \
- --testnet-magic 2\
- --tx-in $txhash#$txix\
- --tx-in f5aaf503fdc5d6b7535fe06acf9e1106bb07df16701cd776232d3d530073c963#1\
- --tx-out $address+$burnoutput\
- --mint="-1 $policyid.$tokenname"\
+cardano-cli babbage transaction build \
+ --testnet-magic 2 \
+ --tx-in $txhash#$txix \
+ --tx-out $address+$burnoutput \
+ --mint="-10000 $policyid.$tokenname" \
  --minting-script-file policy/policy.script \
  --change-address $address \
- --witness-override 2\
+ --witness-override 2 \
  --out-file burning.raw
 
 #4-Ký giao dịch

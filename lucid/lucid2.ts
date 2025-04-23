@@ -27,7 +27,7 @@ async function createMintingScripts(slot_in:bigint) {
                 { type: "Sig", keyHash: payment.hash },
                 {
                     type: "Before",
-                    slot: slot_in,
+                    slot: BigInt(78668654),
                 },
             ],
         },
@@ -43,10 +43,11 @@ async function mintToken(policyId:string, tokenName: string, amount: bigint, slo
     const metadata = {
         [policyId] : {
             [tokenName]: {
-                "description": "This is token minted by Lucid",
-                "name": `${tokenName}`,
-                "id": 1,
-                "image": "ipfs://QmRE3Qnz5Q8dVtKghL4NBhJBH4cXPwfRge7HMiBhK92SJX"
+                "class": "C2VN_BK03",
+                "name": "Nguyễn Hồng Sắc",
+                "student_no": 253,
+                "image": "ipfs://QmRE3Qnz5Q8dVtKghL4NBhJBH4cXPwfRge7HMiBhK92SJX",
+                "Module": "module 1-CLI",
             }
         }
     };
@@ -74,21 +75,21 @@ async function burnToken(policyId:string, tokenName: string, amount: bigint, slo
     return tx;
 }
 
-const slot_in = BigInt(78653698); //BigInt(lucid.utils.unixTimeToSlots(Date.now() + 1000000));
+const slot_in = BigInt(lucid.utils.unixTimeToSlots(Date.now() + 1000000));
 console.log(`Slot: ${slot_in}`);
 
 const mintingScripts = await createMintingScripts(slot_in);
 const policyId = mintingScripts.toHash();
 
 // Mint token
-// const tx = await mintToken(policyId, "Nguyen Hong Sac_253", -1n, slot_in);
-// const signedTx = await tx.sign().commit();
-// const txHash = await signedTx.submit();
-// console.log(`Check in: https://preview.cexplorer.io/tx/${txHash}`);
-
-
-// Burn
-const tx = await burnToken(policyId, "Nguyen Hong Sac_253", -1n, slot_in);
+const tx = await mintToken(policyId, "Nguyen Hong Sac_253", 1n, slot_in);
 const signedTx = await tx.sign().commit();
 const txHash = await signedTx.submit();
 console.log(`Check in: https://preview.cexplorer.io/tx/${txHash}`);
+
+
+// Burn
+// const tx = await burnToken(policyId, "Nguyen Hong Sac_253", 1n, slot_in);
+// const signedTx = await tx.sign().commit();
+// const txHash = await signedTx.submit();
+// console.log(`Check in: https://preview.cexplorer.io/tx/${txHash}`);

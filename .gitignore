@@ -5,4 +5,5 @@
 *.script
 *.raw
 *.signed
+.prv
 protocol.json
